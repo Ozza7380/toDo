@@ -65,6 +65,12 @@ app.get('/api/me', (c) => {
     }
 });
 
+app.post('/api/logout', (c) => {
+    //maxAge -1 menyuuruh browser menghapus cookie nya
+    setCookie(c, 'token', '', { maxAge: -1 });
+    return c.json({ success: true, massage: 'Logout berhasil' })
+});
+
 // Ekspor app afar Vercel mengenalinya sebagai serverless handler
    export default app;
 
