@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { pool } from './db/index.js';
 import { serve } from '@hono/node-server';
 import jwt from 'jsonwebtoken';
-import { setCookie } from 'hono/cookie';
+import { getCookie, setCookie } from 'hono/cookie';
 
 const app = new Hono()
 
@@ -51,6 +51,18 @@ app.post('/api/login', async (c) => {
 
     setCookie(c, 'token', token, { httpOnly: true, sameSite: 'Lax', maxAge: 3600 });
     return c.json({ success: true, massage: 'Login berhasil' });
+});
+
+app.get('/api/me', (c) => {
+    const token = getCookie(c, 'token');
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
+
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        return c.json({ success: true, data: user });    
+    } catch (err) {
+        return c.json({ success: false, massage: 'Token tidak valid' }, 401);
+    }
 });
 
 // Ekspor app afar Vercel mengenalinya sebagai serverless handler
