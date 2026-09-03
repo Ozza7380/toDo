@@ -1,10 +1,8 @@
-import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from './schema.js';
+import { connectionString } from "pg/lib/defaults";
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+// konfigutasi SSL dibawa oleh ?sslmode=no-verify di DAATABASE_URL
+// supaya cukup diset di satu tepat (file .env)
+export const Pool = new Pool({
+    connectionString: process.env.DATABASE_URL
 });
-
-export const db = drizzle(pool, { schema })
