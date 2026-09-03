@@ -5,7 +5,6 @@ import { pool } from './db/index.js';
 import { serve } from '@hono/node-server';
 import jwt from 'jsonwebtoken';
 import { setCookie } from 'hono/cookie';
-import { getCookie, setCookie } from 'hono/cookie';
 
 const app = new Hono()
 
@@ -33,19 +32,19 @@ app.post('/api/login', async (c) => {
     const { username, password } = await c.req.json();
 
     const { rows } = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    [0];
+    const users = rows[0];
 
-    if (!user) {
+    if (!users) {
         return c.json({ success: false, massage: 'Username atau password salah' }, 401);
     }
 
-    const isPassowrdValid = await bcrypt.compare(password, user.password);
+    const isPassowrdValid = await bcrypt.compare(password, users.password);
     if (!isPassowrdValid) {
         return c.json({ succes: false, massage: 'Username atau password salah' }, 401);
     }
 
     const token = jwt.sign(
-        { id: user.id, username: user.username },
+        { id: users.id, username: users.username },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
     );
