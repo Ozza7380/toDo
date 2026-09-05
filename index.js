@@ -4,14 +4,15 @@ import { pool } from './db/index.js';
 import { serve } from '@hono/node-server';
 import jwt from 'jsonwebtoken';
 import { getCookie, setCookie } from 'hono/cookie';
-import { register } from './routes/register.route.js';
-import { login } from './routes/login.routes.js';
-import { me } from './routes/me.routes.js';
+import { register } from './routes/auth/register.route.js';
+import { login } from './routes/auth/login.routes.js';
+import { me } from './routes/auth/me.routes.js';
+import { create } from './routes/todo/create.route.js';
 
 
 const app = new Hono()
 
-// auth
+// ===== AUTH ====
 
 //daftar
 app.post('/api/register', register);
@@ -22,25 +23,10 @@ app.post('/api/login', login);
 //cek token/cookies
 app.get('/api/me', me);
 
+// ===== TODO =====
+
 // Buat note
-app.post('/api/todos', async (c) => {
-    const token = getCookie(c, 'token');
-    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
-
-    try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-        const { note } = await c.req.json();
-
-        const { rows } = await pool.query(
-            'INSERT INTO todos (note, user_id) VALUES ($1, $2) RETURNING id, note, user_id',
-            [note, user.id]
-        );
-        return c.json({ success: true, data: rows[0] }, 201);
-    } catch (err) {
-        console.error(err);
-        return c.json({ success: false, massage: 'server error' }, 500);
-    }
-});
+app.post('/api/todos', create);
 
 //menampilkan note/list todos
 app.get('/api/todos', async (c) => {
