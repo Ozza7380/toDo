@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { Hono } from "hono";
-import bcrypt from 'bcryptjs';
 import { pool } from './db/index.js';
 import { serve } from '@hono/node-server';
 import jwt from 'jsonwebtoken';
 import { getCookie, setCookie } from 'hono/cookie';
 import { register } from './routes/register.route.js';
+import { login } from './routes/login.routes.js';
 
 
 const app = new Hono()
@@ -16,30 +16,7 @@ const app = new Hono()
 app.post('/api/register', register);
 
 //login
-app.post('/api/login', async (c) => {
-    const { username, password } = await c.req.json();
-
-    const { rows } = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    const users = rows[0];
-
-    if (!users) {
-        return c.json({ success: false, massage: 'Username atau password salah' }, 401);
-    }
-
-    const isPassowrdValid = await bcrypt.compare(password, users.password);
-    if (!isPassowrdValid) {
-        return c.json({ success: false, massage: 'Username atau password salah' }, 401);
-    }
-
-    const token = jwt.sign(
-        { id: users.id, username: users.username },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-    );
-
-    setCookie(c, 'token', token, { httpOnly: true, sameSite: 'Lax', maxAge: 3600 });
-    return c.json({ success: true, massage: 'Login berhasil' });
-});
+app.post('/api/login', login);
 
 //cek token/cookies
 app.get('/api/me', (c) => {
