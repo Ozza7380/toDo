@@ -11,6 +11,7 @@ import { create } from './routes/todo/create.route.js';
 import { logout } from './routes/auth/logout.routes.js';
 import { list } from './routes/todo/list.route.js';
 import { detail } from './routes/todo/detail.route.js';
+import { edit } from './routes/todo/edit.route.js';
 
 
 const app = new Hono()
@@ -41,28 +42,7 @@ app.get('/api/todos', list);
 app.get('/api/todos/:id', detail);
 
 // edit todo
-app.put('/api/todos/:id', async (c) => {
-    const id = Number(c.req.param('id'));
-
-    const token = getCookie(c, 'token');
-
-    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
-
-    try {
-        const { note } = await c.req.json()
-
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-
-        const { rows } = await pool.query(
-            'UPDATE todos SET note = $1 WHERE user_id = $2 AND id = $3 RETURNING id, note, user_id',
-            [note, user.id, id]
-        );
-        return c.json({ success: true, data: rows[0] });
-    } catch (err) {
-        console.error(err);
-        return c.json({ success: false, massage: 'Server error' }, 500)
-    }
-});
+app.put('/api/todos/:id', edit);
 
 // hapus todo
 app.delete('/api/todos/:id', async (c) => {
