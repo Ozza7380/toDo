@@ -56,6 +56,7 @@ app.post('/api/login', async (c) => {
     return c.json({ success: true, massage: 'Login berhasil' });
 });
 
+//cek token/cookies
 app.get('/api/me', (c) => {
     const token = getCookie(c, 'token');
     if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
@@ -68,7 +69,7 @@ app.get('/api/me', (c) => {
     }
 });
 
-// Menyimpan note
+// Buat note
 app.post('/api/todos', async (c) => {
     const token = getCookie(c, 'token');
     if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
@@ -88,6 +89,7 @@ app.post('/api/todos', async (c) => {
     }
 });
 
+//logout
 app.post('/api/logout', (c) => {
     //maxAge -1 menyuuruh browser menghapus cookie nya
     setCookie(c, 'token', '', { maxAge: -1 });
@@ -112,8 +114,8 @@ app.get('/api/todos', async (c) => {
     }
 });
 
-//
-app.get('api/todos/:id', async (c) => {
+//get todo by id
+app.get('/api/todos/:id', async (c) => {
 
     const id = Number(c.req.param('id'))
 
@@ -122,17 +124,40 @@ app.get('api/todos/:id', async (c) => {
     if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
 
     try {
-
         const user = jwt.verify(token, process.env.JWT_SECRET);
 
         const { rows } = await pool.query(
-            'SELECT id, note, user_id FROM todos WHERE user_id =$1 AND id =$2',
+            'SELECT id, note, user_id FROM todos WHERE user_id = $1 AND id = $2',
             [user.id, id]
         );
         return c.json({ success: true, data: rows[0] });
     } catch (err) {
         console.error(err)
         return c.json({ success: false, massage: 'Server error' }, 500);
+    }
+});
+
+// edit todo
+app.put('/api/todos/:id', async (c) => {
+    const id = Number(c.req.param('id'));
+
+    const token = getCookie(c, 'token');
+
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
+
+    try {
+        const { note } = await c.req.json()
+
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+
+        const { rows } = await pool.query(
+            'UPDATE todos SET note = $1 WHERE user_id = $2 AND id = $3 RETURNING id, note, user_id',
+            [note, user.id, id]
+        );
+        return c.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error(err);
+        return c.json({ success: false, massage: 'Server error' }, 500)
     }
 });
 
