@@ -22,8 +22,8 @@ app.post('/api/register', async (c) => {
         );
         return c.json({ success: true, data: rows[0] }, 201);
     } catch (err) {
-    console.error(err)
-    return c.json({ success: false, massage: 'Registrasi gagal' }, 400);
+        console.error(err)
+        return c.json({ success: false, massage: 'Registrasi gagal' }, 400);
     }
 
 
@@ -62,7 +62,7 @@ app.get('/api/me', (c) => {
 
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
-        return c.json({ success: true, data: user });    
+        return c.json({ success: true, data: user });
     } catch (err) {
         return c.json({ success: false, massage: 'Token tidak valid' }, 401);
     }
@@ -73,7 +73,7 @@ app.post('/api/todos', async (c) => {
     const token = getCookie(c, 'token');
     if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
 
-    try{
+    try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
         const { note } = await c.req.json();
 
@@ -94,10 +94,10 @@ app.post('/api/logout', (c) => {
     return c.json({ success: true, massage: 'Logout berhasil' })
 });
 
-//menampilkan note
+//menampilkan note/list todos
 app.get('/api/todos', async (c) => {
     const token = getCookie(c, 'token');
-    if (!token) return c.json({ success: false, massage: 'Unauthorize' }, 401);
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
 
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
@@ -108,12 +108,36 @@ app.get('/api/todos', async (c) => {
         return c.json({ success: true, data: rows });
     } catch (err) {
         console.error(err);
-        return c.json({ success: false, massage: 'Server error' })
+        return c.json({ success: false, massage: 'Server error' }, 500)
+    }
+});
+
+//
+app.get('api/todos/:id', async (c) => {
+
+    const id = Number(c.req.param('id'))
+
+    const token = getCookie(c, 'token')
+
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
+
+    try {
+
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+
+        const { rows } = await pool.query(
+            'SELECT id, note, user_id FROM todos WHERE user_id =$1 AND id =$2',
+            [user.id, id]
+        );
+        return c.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error(err)
+        return c.json({ success: false, massage: 'Server error' }, 500);
     }
 });
 
 // Ekspor app afar Vercel mengenalinya sebagai serverless handler
-   export default app;
+export default app;
 
 // jalankan server ini hanya di lingkungan lokal (bukan vercel)
 if (!process.env.VERCEL) {
