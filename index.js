@@ -12,6 +12,7 @@ import { logout } from './routes/auth/logout.routes.js';
 import { list } from './routes/todo/list.route.js';
 import { detail } from './routes/todo/detail.route.js';
 import { edit } from './routes/todo/edit.route.js';
+import { remove } from './routes/todo/remove.route.js';
 
 
 const app = new Hono()
@@ -45,26 +46,7 @@ app.get('/api/todos/:id', detail);
 app.put('/api/todos/:id', edit);
 
 // hapus todo
-app.delete('/api/todos/:id', async (c) => {
-    const id = Number(c.req.param('id'));
-
-    const token = getCookie(c, 'token');
-
-    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
-
-    try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-
-        await pool.query(
-            'DELETE FROM todos WHERE user_id=$1 AND id =$2',// fungsi user_id agar tidak bisa menghapus data orang lain
-            [user.id, id]
-        )
-        return c.json({ success: true, massage: 'Berhasil dihapus' });
-    } catch (err) {
-        console.error(err)
-        return c.json({ success: false, massage: 'Server error' }, 500)
-    }
-});
+app.delete('/api/todos/:id', remove);
 
 
 
