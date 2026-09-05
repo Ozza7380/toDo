@@ -8,6 +8,7 @@ import { register } from './routes/auth/register.route.js';
 import { login } from './routes/auth/login.routes.js';
 import { me } from './routes/auth/me.routes.js';
 import { create } from './routes/todo/create.route.js';
+import { logout } from './routes/auth/logout.routes.js';
 
 
 const app = new Hono()
@@ -22,6 +23,9 @@ app.post('/api/login', login);
 
 //cek token/cookies
 app.get('/api/me', me);
+
+//logout
+app.post('/api/logout', logout);
 
 // ===== TODO =====
 
@@ -115,12 +119,7 @@ app.delete('/api/todos/:id', async (c) => {
     }
 });
 
-//logout
-app.post('/api/logout', (c) => {
-    //maxAge -1 menyuuruh browser menghapus cookie nya
-    setCookie(c, 'token', '', { maxAge: -1 });
-    return c.json({ success: true, massage: 'Logout berhasil' })
-});
+
 
 
 
