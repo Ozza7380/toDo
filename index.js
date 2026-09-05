@@ -29,7 +29,6 @@ app.post('/api/register', async (c) => {
 
 });
 
-
 //login
 app.post('/api/login', async (c) => {
     const { username, password } = await c.req.json();
@@ -87,13 +86,6 @@ app.post('/api/todos', async (c) => {
         console.error(err);
         return c.json({ success: false, massage: 'server error' }, 500);
     }
-});
-
-//logout
-app.post('/api/logout', (c) => {
-    //maxAge -1 menyuuruh browser menghapus cookie nya
-    setCookie(c, 'token', '', { maxAge: -1 });
-    return c.json({ success: true, massage: 'Logout berhasil' })
 });
 
 //menampilkan note/list todos
@@ -160,6 +152,37 @@ app.put('/api/todos/:id', async (c) => {
         return c.json({ success: false, massage: 'Server error' }, 500)
     }
 });
+
+// hapus todo
+app.delete('/api/todos/:id', async (c) => {
+    const id = Number(c.req.param('id'));
+
+    const token = getCookie(c, 'token');
+
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
+
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+
+        await pool.query(
+            'DELETE FROM todos WHERE user_id=$1 AND id =$2',// fungsi user_id agar tidak bisa menghapus data orang lain
+            [user.id, id]
+        )
+        return c.json({ success: true, massage: 'Berhasil dihapus' });
+    } catch (err) {
+        console.error(err)
+        return c.json({ success: false, massage: 'Server error' }, 500)
+    }
+});
+
+//logout
+app.post('/api/logout', (c) => {
+    //maxAge -1 menyuuruh browser menghapus cookie nya
+    setCookie(c, 'token', '', { maxAge: -1 });
+    return c.json({ success: true, massage: 'Logout berhasil' })
+});
+
+
 
 // Ekspor app afar Vercel mengenalinya sebagai serverless handler
 export default app;
