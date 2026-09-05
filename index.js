@@ -10,6 +10,7 @@ const app = new Hono()
 
 // auth
 
+//daftar
 app.post('/api/register', async (c) => {
     const { username, password } = await c.req.json();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,15 +20,17 @@ app.post('/api/register', async (c) => {
             'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username',
             [username, hashedPassword]
         );
-        return c.json({ succes: true, data: rows[0] }, 201);
+        return c.json({ success: true, data: rows[0] }, 201);
     } catch (err) {
     console.error(err)
-    return c.json({ succes: false, massage: 'Registrasi gagal' }, 400);
+    return c.json({ success: false, massage: 'Registrasi gagal' }, 400);
     }
 
 
 });
 
+
+//login
 app.post('/api/login', async (c) => {
     const { username, password } = await c.req.json();
 
@@ -40,7 +43,7 @@ app.post('/api/login', async (c) => {
 
     const isPassowrdValid = await bcrypt.compare(password, users.password);
     if (!isPassowrdValid) {
-        return c.json({ succes: false, massage: 'Username atau password salah' }, 401);
+        return c.json({ success: false, massage: 'Username atau password salah' }, 401);
     }
 
     const token = jwt.sign(
@@ -65,6 +68,26 @@ app.get('/api/me', (c) => {
     }
 });
 
+// Menyimpan note
+app.post('/api/todos', async (c) => {
+    const token = getCookie(c, 'token');
+    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
+
+    try{
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        const { note } = await c.req.json();
+
+        const { rows } = await pool.query(
+            'INSERT INTO todos (note, user_id) VALUES ($1, $2) RETURNING id, note, user_id',
+            [note, user.id]
+        );
+        return c.json({ success: true, data: rows[0] }, 201);
+    } catch (err) {
+        console.error(err);
+        return c.json({ success: false, massage: 'server error' }, 500);
+    }
+});
+
 app.post('/api/logout', (c) => {
     //maxAge -1 menyuuruh browser menghapus cookie nya
     setCookie(c, 'token', '', { maxAge: -1 });
@@ -76,7 +99,7 @@ app.post('/api/logout', (c) => {
 
 // jalankan server ini hanya di lingkungan lokal (bukan vercel)
 if (!process.env.VERCEL) {
-    const port = 3000;
+    const port = 3001;
     console.log(`Server Berjalan Di "http://localhost:${port}`);
     serve({ fetch: app.fetch, port });
 }
