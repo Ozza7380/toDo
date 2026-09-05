@@ -5,29 +5,15 @@ import { pool } from './db/index.js';
 import { serve } from '@hono/node-server';
 import jwt from 'jsonwebtoken';
 import { getCookie, setCookie } from 'hono/cookie';
+import { register } from './routes/register.route.js';
+
 
 const app = new Hono()
 
 // auth
 
 //daftar
-app.post('/api/register', async (c) => {
-    const { username, password } = await c.req.json();
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-        const { rows } = await pool.query(
-            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username',
-            [username, hashedPassword]
-        );
-        return c.json({ success: true, data: rows[0] }, 201);
-    } catch (err) {
-        console.error(err)
-        return c.json({ success: false, massage: 'Registrasi gagal' }, 400);
-    }
-
-
-});
+app.post('/api/register', register);
 
 //login
 app.post('/api/login', async (c) => {
