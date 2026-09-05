@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { getCookie, setCookie } from 'hono/cookie';
 import { register } from './routes/register.route.js';
 import { login } from './routes/login.routes.js';
+import { me } from './routes/me.routes.js';
 
 
 const app = new Hono()
@@ -19,17 +20,7 @@ app.post('/api/register', register);
 app.post('/api/login', login);
 
 //cek token/cookies
-app.get('/api/me', (c) => {
-    const token = getCookie(c, 'token');
-    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
-
-    try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-        return c.json({ success: true, data: user });
-    } catch (err) {
-        return c.json({ success: false, massage: 'Token tidak valid' }, 401);
-    }
-});
+app.get('/api/me', me);
 
 // Buat note
 app.post('/api/todos', async (c) => {
