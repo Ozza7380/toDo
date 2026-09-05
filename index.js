@@ -9,7 +9,8 @@ import { login } from './routes/auth/login.routes.js';
 import { me } from './routes/auth/me.routes.js';
 import { create } from './routes/todo/create.route.js';
 import { logout } from './routes/auth/logout.routes.js';
-import { list } from './routes/todo/list.routes.js';
+import { list } from './routes/todo/list.route.js';
+import { detail } from './routes/todo/detail.route.js';
 
 
 const app = new Hono()
@@ -37,27 +38,7 @@ app.post('/api/todos', create);
 app.get('/api/todos', list);
 
 //get todo by id
-app.get('/api/todos/:id', async (c) => {
-
-    const id = Number(c.req.param('id'))
-
-    const token = getCookie(c, 'token')
-
-    if (!token) return c.json({ success: false, massage: 'Unauthorized' }, 401);
-
-    try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-
-        const { rows } = await pool.query(
-            'SELECT id, note, user_id FROM todos WHERE user_id = $1 AND id = $2',
-            [user.id, id]
-        );
-        return c.json({ success: true, data: rows[0] });
-    } catch (err) {
-        console.error(err)
-        return c.json({ success: false, massage: 'Server error' }, 500);
-    }
-});
+app.get('/api/todos/:id', detail);
 
 // edit todo
 app.put('/api/todos/:id', async (c) => {
