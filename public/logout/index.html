@@ -6,17 +6,19 @@
     <title>Logging out...</title>
 </head>
 <body>
-    <h1>Anda sedang keluar...</h1>
-</body>
-<script>
+    <h1>Anda Sedang Keluar...</h1>
+
+    <script>
     (async () => {
-        try{
-            await fetch('/api/logout', { method: 'POST' });
+        try {
+            console.log('keluar')
+            await fetch('/api/logout', { method: 'POST' }); 
         } catch (error) {
             console.error('Logout failed', error);
         } finally {
             window.location.href = '/login/'
         }
-    })
+    })();
 </script>
+</body>
 </html>
