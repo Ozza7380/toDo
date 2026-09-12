@@ -14,5 +14,39 @@
         <button type="submit">Daftar</button>
     </form>
     <p>Sudah punya akun?<a href="/login/">Login disini</a></p>
+    <script>
+        const form = document.getElementById('registrationForm');
+        const massageDiv = document.getElementById('massage');
+
+        form.addEventListener('submit', async (e) => {
+            console.log('submit')
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            massageDiv.textContent = '';
+            massageDiv.style.color = 'red';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+                
+                const result = await response.json();
+
+                if (result.success) {
+                    massageDiv.style.color = 'green';
+                    massageDiv.innerHTML = 
+                    'Registrasi berhasil! Silahkan <a href="/login/">Login</a>.';
+                    form.reset();
+                } else {
+                    massageDiv.textContent = result.massage || 'Registrasi gagal!';
+                }
+            } catch (error) {
+                massageDiv.textContent = 'Terjadi kesalahan. Silahkan coba lagi.';
+            }
+        });
+    </script>
 </body>
 </html>
