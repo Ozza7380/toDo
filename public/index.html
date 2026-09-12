@@ -7,5 +7,23 @@
 </head>
 <body>
     <h1>hello </h1>
+    <a href="/register/">Halaman Registrasi</a>
+       <script>
+        const options = {
+  method: 'GET',
+  headers: {
+    Accept: '*/*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'User-Agent': 'EchoapiRuntime/1.1.0',
+    Connection: 'keep-alive',
+    Cookie: 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJhbGkiLCJpYXQiOjE3ODkxODQ5NDQsImV4cCI6MTc4OTE4ODU0NH0.Oto_nyj7pe8M1eK5UuG6NMlnOl7TG1lY6Q2kt5oW4xQ'
+  }
+};
+
+fetch('http://localhost:3001/api/me', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+    </script>
 </body>
 </html>
