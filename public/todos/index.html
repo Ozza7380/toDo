@@ -22,6 +22,40 @@
         </main>
     </div>
 
-    <script></script>
+    <script>
+        const usernameSpan = document.getElementById('username');
+        const addTodoForm = document.getElementById('addTodoForm');
+        const noteInput = document.getElementById('noteInput');
+        const todoList = document.getElementById('todoList');
+
+        // 1. Periksa login dan dapatkan data pengguna
+        (async () => {
+            try {
+                const response = await fetch('/api/me');
+                if (!response.ok) {
+                    window.location.href = '/login/';
+                    return;
+                }
+                const { success, data } = await response.json();
+                if (success) {
+                    usernameSpan.textContent = data.username;
+                    //fetchTodos()//muat todos setelah user terindetifikasi
+                } else {
+                    window.location.href = '/login/'
+                }
+            } catch (error) {
+                window.location.href = '/login/'
+            }
+        })();
+
+        //fungsi untuk mengambil dan menampilkan todos
+        const fetchTodos = async () => {
+            try {
+                const response = await fetch('/api/todos');//endpoint GEt
+            } catch (error) {
+                
+            }
+        }
+    </script>
 </body>
 </html>
