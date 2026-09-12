@@ -1,21 +1,21 @@
-import 'dotenv/config';
-import { Hono } from "hono";
-import { pool } from './db/index.js';
-import { serve } from '@hono/node-server';
-import jwt from 'jsonwebtoken';
-import { getCookie, setCookie } from 'hono/cookie';
-import { register } from './routes/auth/register.route.js';
-import { login } from './routes/auth/login.routes.js';
-import { me } from './routes/auth/me.routes.js';
-import { create } from './routes/todo/create.route.js';
-import { logout } from './routes/auth/logout.routes.js';
-import { list } from './routes/todo/list.route.js';
-import { detail } from './routes/todo/detail.route.js';
-import { edit } from './routes/todo/edit.route.js';
-import { remove } from './routes/todo/remove.route.js';
-
+import 'dotenv/config';                                         //baca file env
+import { Hono } from "hono";                                    //libary server
+import { serve } from '@hono/node-server';                      //menjalankan server lokal
+import { register } from './routes/auth/register.route.js';     //api
+import { login } from './routes/auth/login.routes.js';          //api
+import { me } from './routes/auth/me.routes.js';                //api
+import { create } from './routes/todo/create.route.js';         //api
+import { logout } from './routes/auth/logout.routes.js';        //api
+import { list } from './routes/todo/list.route.js';             //api
+import { detail } from './routes/todo/detail.route.js';         // api
+import { edit } from './routes/todo/edit.route.js';             // api
+import { remove } from './routes/todo/remove.route.js';         // api
+import { serveStatic } from '@hono/node-server/serve-static';   // ui
 
 const app = new Hono()
+
+// ===== UI  =====
+app.use('/*', serveStatic({ root: './public' }));
 
 // ===== AUTH ====
 
@@ -47,10 +47,6 @@ app.put('/api/todos/:id', edit);
 
 // hapus todo
 app.delete('/api/todos/:id', remove);
-
-
-
-
 
 // Ekspor app afar Vercel mengenalinya sebagai serverless handler
 export default app;
