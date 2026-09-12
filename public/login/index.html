@@ -14,5 +14,33 @@
         <button type="submit">Login</button>
     </form>
     <p>Belum punya akun? <a href="/register/">Daftar di sini</a></p>
+    <script>
+        const form = document.getElementById('loginForm');
+        const massageDiv = document.getElementById('massage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            massageDiv.textContent = '';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = '/todos/';
+                } else {
+                    massageDiv.textContent = result.massage || 'Login gagal';
+                }
+            } catch (error) {
+                massageDiv.textContent = 'Terjadi kesalahan. Silahkan coba lagi';
+            }
+        });
+    </script>
 </body>
 </html>
