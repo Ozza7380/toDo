@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit</title>
+</head>
+<body>
+  <h1>Edit Todos</h1>
+<form id="editTodos">
+  <input type="text" id="noteEdit" required>
+  <button type="submit">Simpan edit</button>
+</form>
+
+  <script>
+    const queryString = window.location.search;
+    const urlParam = new URLSearchParams(queryString);
+    const id = urlParam.get('id_todo');
+    const inputElm = document.getElementById('noteEdit');
+    console.log(id)
+
+    fetch(`http://localhost:3001/api/todos/${id}`)
+  .then(response => response.json())
+  .then(response => {
+    const { success, data } = response
+
+    if (!success) {
+      alert('Data salah')
+      return;
+    }
+    
+    inputElm.value = data.note;
+  })
+  .catch(err => console.error(err));
+
+
+  </script>
+</body>
+</html>

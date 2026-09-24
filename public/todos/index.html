@@ -58,17 +58,24 @@
                         
                         const li = document.createElement('li');
                         li.textContent = todo.note;
+
                         const btnDetail = document.createElement('button');
-                        btnDetail.textContent = "Detail"
+                        btnDetail.textContent = "Detail";
+
                         const btnEdit = document.createElement('button');
-                        btnEdit.textContent = "Edit"
+                        btnEdit.textContent = "Edit";
+
+                        btnEdit.onclick = function() {
+                            window.location.href = `/todos/edit/?id_todo=${todo.id}`
+                        };
 
                         btnDetail.onclick = function() {
                             alert(`
                             id: ${todo.id}
                             note: ${todo.note}
                             user id: ${todo.user_id}`)
-                        }
+                        };
+                        
                         li.appendChild(btnEdit);
                         li.appendChild(btnDetail);
                         todoList.appendChild(li);
