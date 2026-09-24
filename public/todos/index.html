@@ -65,6 +65,18 @@
                         const btnEdit = document.createElement('button');
                         btnEdit.textContent = "Edit";
 
+                        const btnDelete = document.createElement('button');
+                        btnDelete.textContent = "Delete"
+
+                        btnDelete.onclick = function() {
+                            const ya = confirm("Apakah anda ingin menghapus data ini?")
+                            if (ya) {
+                                alert('Data berhasil dihapus')
+                            } else {
+                                alert('Aksi dibatalkan')
+                            }
+                        };
+
                         btnEdit.onclick = function() {
                             window.location.href = `/todos/edit/?id_todo=${todo.id}`
                         };
@@ -75,7 +87,8 @@
                             note: ${todo.note}
                             user id: ${todo.user_id}`)
                         };
-                        
+
+                        li.appendChild(btnDelete);
                         li.appendChild(btnEdit);
                         li.appendChild(btnDetail);
                         todoList.appendChild(li);
