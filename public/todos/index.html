@@ -47,15 +47,50 @@
                 window.location.href = '/login/'
             }
         })();
-
-        //fungsi untuk mengambil dan menampilkan todos
+        //2. fungsi untuk mengambil dan menampilkan todos
         const fetchTodos = async () => {
             try {
-                const response = await fetch('/api/todos');//endpoint GEt
+                const response = await fetch('/api/todos');//endpoint GET
+                const { success, data } = await response.json();
+                if (success) {
+                    todoList.innerHTML = ''; //kosongkan daftar
+                    data.forEach((todo) => {
+                        const li = document.createElement('li');
+                        li.textContent = todo.note;
+                        todoList.appendChild(li);
+                    });
+                }
             } catch (error) {
-                
+                console.error('Gagal mengambil todos:', error);
             }
-        }
+        };
+        //3. event listener menambah todo baru 
+        addTodoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const note = noteInput.value;
+
+            
+            try {
+                if (!note) {
+                alert('Note harus diisi!')
+                return;
+            }
+                const response = await fetch('/api/todos', {
+                    method: 'POST',
+                    headers: { 'Content-type': 'application/json' },
+                    body: JSON.stringify({ note })
+                });
+                const { success } = await response.json();
+                if (success) {
+                    noteInput.value = '';
+                    fetchTodos();//muat ulang daftar todos
+                }
+            } catch (error) {
+                console.error('Gagal menambah todo:', error)
+            }
+        });
+
     </script>
 </body>
 </html>
