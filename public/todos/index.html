@@ -59,7 +59,9 @@
                         const li = document.createElement('li');
                         li.textContent = todo.note;
                         const btnDetail = document.createElement('button');
-                        btnDetail.textContent = "detail"
+                        btnDetail.textContent = "Detail"
+                        const btnEdit = document.createElement('button');
+                        btnEdit.textContent = "Edit"
 
                         btnDetail.onclick = function() {
                             alert(`
@@ -67,6 +69,7 @@
                             note: ${todo.note}
                             user id: ${todo.user_id}`)
                         }
+                        li.appendChild(btnEdit);
                         li.appendChild(btnDetail);
                         todoList.appendChild(li);
 
