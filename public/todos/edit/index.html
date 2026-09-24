@@ -18,6 +18,8 @@
     const id = urlParam.get('id_todo');
     const inputElm = document.getElementById('noteEdit');
     console.log(id)
+    const editTodos = document.getElementById('editTodos')
+
 
     fetch(`http://localhost:3001/api/todos/${id}`)
   .then(response => response.json())
@@ -28,11 +30,37 @@
       alert('Data salah')
       return;
     }
-    
+
     inputElm.value = data.note;
   })
   .catch(err => console.error(err));
 
+  editTodos.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const noteEdit = inputElm.value
+    
+    const option = {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: `{ "note": "${noteEdit}" }`
+};
+
+
+fetch(`http://localhost:3001/api/todos/${id}`, option)
+  .then(response => response.json())
+  .then(response => {
+    const { success, data } = response
+
+    if (!success) {
+      alert("Gagal")
+      return;
+    }
+    alert("data berhasil diedit");
+    window.location.href = '/todos/'
+  })
+  .catch(err => console.error(err));
+
+  });
 
   </script>
 </body>
