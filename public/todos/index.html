@@ -64,6 +64,8 @@
                 console.error('Gagal mengambil todos:', error);
             }
         };
+        fetchTodos();
+        
         //3. event listener menambah todo baru 
         addTodoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
