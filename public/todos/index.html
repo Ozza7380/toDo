@@ -55,13 +55,17 @@
                 if (success) {
                     todoList.innerHTML = ''; //kosongkan daftar
                     data.forEach((todo) => {
+                        
                         const li = document.createElement('li');
                         li.textContent = todo.note;
                         const btnDetail = document.createElement('button');
                         btnDetail.textContent = "detail"
 
                         btnDetail.onclick = function() {
-                            alert('button diklik')
+                            alert(`
+                            id: ${todo.id}
+                            note: ${todo.note}
+                            user id: ${todo.user_id}`)
                         }
                         li.appendChild(btnDetail);
                         todoList.appendChild(li);
