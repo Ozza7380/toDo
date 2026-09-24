@@ -57,7 +57,16 @@
                     data.forEach((todo) => {
                         const li = document.createElement('li');
                         li.textContent = todo.note;
+                        const btnDetail = document.createElement('button');
+                        btnDetail.textContent = "detail"
+
+                        btnDetail.onclick = function() {
+                            alert('button diklik')
+                        }
+                        li.appendChild(btnDetail);
                         todoList.appendChild(li);
+
+                        
                     });
                 }
             } catch (error) {
@@ -65,7 +74,7 @@
             }
         };
         fetchTodos();
-        
+
         //3. event listener menambah todo baru 
         addTodoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
