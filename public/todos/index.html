@@ -71,7 +71,19 @@
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
 
-                        
+                        //checkbox.addEventListener('change', async () => {
+                            //if (checkbox.checked) {
+                                //try {
+                                //    await fetch(`/api/todos/${todo.id}/`, {
+                                //        method: 'POST'
+                                //    });
+                                //    alert(`Todo dengan nama ${todo.note} telah selesai!`);
+                                //    fetchTodos(); //muat ulang daftar todos
+                                //} catch (error) {
+                                //    console.error('Gagal menandai todo sebagai selesai:', error);
+                                //}
+                            //}
+                        //});
 
                         btnDelete.onclick = async function() {
                             const ya = confirm("Apakah anda ingin menghapus data ini?")
