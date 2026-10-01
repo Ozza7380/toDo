@@ -55,6 +55,7 @@
                 if (success) {
                     todoList.innerHTML = ''; //kosongkan daftar
                     data.forEach((todo) => {
+                        console.log(todo)
                         
                         const li = document.createElement('li');
                         li.textContent = todo.note;
@@ -70,6 +71,7 @@
 
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
+                        checkbox.checked = todo.status; // Set checkbox sesuai status todo
 
                         checkbox.addEventListener('change', async () => {
                             if (checkbox.checked) {
@@ -80,6 +82,7 @@
                                         body: JSON.stringify({ status: true }),
                                     });
                                     alert(`Todo dengan nama ${todo.note} telah selesai!`);
+                                    
                                     fetchTodos(); //muat ulang daftar todos
                                 } catch (error) {
                                     console.error('Gagal menandai todo sebagai selesai:', error);
