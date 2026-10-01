@@ -71,19 +71,21 @@
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
 
-                        //checkbox.addEventListener('change', async () => {
-                            //if (checkbox.checked) {
-                                //try {
-                                //    await fetch(`/api/todos/${todo.id}/`, {
-                                //        method: 'POST'
-                                //    });
-                                //    alert(`Todo dengan nama ${todo.note} telah selesai!`);
-                                //    fetchTodos(); //muat ulang daftar todos
-                                //} catch (error) {
-                                //    console.error('Gagal menandai todo sebagai selesai:', error);
-                                //}
-                            //}
-                        //});
+                        checkbox.addEventListener('change', async () => {
+                            if (checkbox.checked) {
+                                try {
+                                    await fetch(`/api/todos/${todo.id}/check`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type' : 'application/json' },
+                                        body: JSON.stringify({ status: true }),
+                                    });
+                                    alert(`Todo dengan nama ${todo.note} telah selesai!`);
+                                    fetchTodos(); //muat ulang daftar todos
+                                } catch (error) {
+                                    console.error('Gagal menandai todo sebagai selesai:', error);
+                                }
+                            }
+                        });
 
                         btnDelete.onclick = async function() {
                             const ya = confirm("Apakah anda ingin menghapus data ini?")
@@ -110,7 +112,9 @@
                             alert(`
                             id: ${todo.id}
                             note: ${todo.note}
-                            user id: ${todo.user_id}`)
+                            user id: ${todo.user_id}
+                            status: ${todo.status}
+                            `)
                         };
 
                         li.appendChild(checkbox);
