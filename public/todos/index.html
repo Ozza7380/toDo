@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Todos</title>
 </head>
+
 <body>
     <div>
         <header>
@@ -56,7 +58,7 @@
                     todoList.innerHTML = ''; //kosongkan daftar
                     data.forEach((todo) => {
                         console.log(todo)
-                        
+
                         const li = document.createElement('li');
                         li.textContent = todo.note;
 
@@ -74,23 +76,22 @@
                         checkbox.checked = todo.status; // Set checkbox sesuai status todo
 
                         checkbox.addEventListener('change', async () => {
-                            if (checkbox.checked) {
-                                try {
-                                    await fetch(`/api/todos/${todo.id}/check`, {
-                                        method: 'PUT',
-                                        headers: { 'Content-Type' : 'application/json' },
-                                        body: JSON.stringify({ status: true }),
-                                    });
-                                    alert(`Todo dengan nama ${todo.note} telah selesai!`);
-                                    
-                                    fetchTodos(); //muat ulang daftar todos
-                                } catch (error) {
-                                    console.error('Gagal menandai todo sebagai selesai:', error);
-                                }
-                            }
-                        });
+                            try {
+                                await fetch(`/api/todos/${todo.id}/check`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ status: checkbox.checked }),
+                                });
+                                alert(`status Todo dengan nama ${todo.note} telah diubah!`);
 
-                        btnDelete.onclick = async function() {
+                                fetchTodos(); //muat ulang daftar todos
+                            } catch (error) {
+                                console.error('Gagal menandai todo sebagai selesai:', error);
+                            }
+                        }
+                        );
+
+                        btnDelete.onclick = async function () {
                             const ya = confirm("Apakah anda ingin menghapus data ini?")
                             if (ya) {
                                 try {
@@ -107,11 +108,11 @@
                             }
                         };
 
-                        btnEdit.onclick = function() {
+                        btnEdit.onclick = function () {
                             window.location.href = `/todos/edit/?id_todo=${todo.id}`
                         };
 
-                        btnDetail.onclick = function() {
+                        btnDetail.onclick = function () {
                             alert(`
                             id: ${todo.id}
                             note: ${todo.note}
@@ -126,7 +127,7 @@
                         li.appendChild(btnDetail);
                         todoList.appendChild(li);
 
-                        
+
                     });
                 }
             } catch (error) {
@@ -141,12 +142,12 @@
 
             const note = noteInput.value;
 
-            
+
             try {
                 if (!note) {
-                alert('Note harus diisi!')
-                return;
-            }
+                    alert('Note harus diisi!')
+                    return;
+                }
                 const response = await fetch('/api/todos', {
                     method: 'POST',
                     headers: { 'Content-type': 'application/json' },
@@ -164,4 +165,5 @@
 
     </script>
 </body>
+
 </html>
