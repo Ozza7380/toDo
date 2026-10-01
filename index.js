@@ -10,7 +10,9 @@ import { list } from './routes/todo/list.route.js';             //api
 import { detail } from './routes/todo/detail.route.js';         // api
 import { edit } from './routes/todo/edit.route.js';             // api
 import { remove } from './routes/todo/remove.route.js';         // api
+import { check } from './routes/todo/check.route.js';           // api
 import { serveStatic } from '@hono/node-server/serve-static';   // ui
+
 
 const app = new Hono()
 
@@ -41,6 +43,9 @@ app.get('/api/todos', list);
 
 //get todo by id
 app.get('/api/todos/:id', detail);
+
+//check todo
+app.put('/api/todos/:id/check', check);
 
 // edit todo
 app.put('/api/todos/:id', edit);
