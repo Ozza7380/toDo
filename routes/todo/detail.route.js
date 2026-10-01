@@ -14,7 +14,7 @@ const detail = async (c) => {
         const user = jwt.verify(token, process.env.JWT_SECRET);
 
         const { rows } = await pool.query(
-            'SELECT id, note, user_id FROM todos WHERE user_id = $1 AND id = $2',
+            'SELECT id, note, user_id, status FROM todos WHERE user_id = $1 AND id = $2',
             [user.id, id]
         );
         return c.json({ success: true, data: rows[0] });
