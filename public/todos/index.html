@@ -68,10 +68,18 @@
                         const btnDelete = document.createElement('button');
                         btnDelete.textContent = "Delete"
 
-                        btnDelete.onclick = function() {
+                        btnDelete.onclick = async function() {
                             const ya = confirm("Apakah anda ingin menghapus data ini?")
                             if (ya) {
-                                alert('Data berhasil dihapus')
+                                try {
+                                    await fetch(`/api/todos/${todo.id}`, {
+                                        method: 'DELETE'
+                                    });
+                                    alert('Data berhasil dihapus');
+                                    await fetchTodos(); //muat ulang daftar todos
+                                } catch (error) {
+                                    console.error('Gagal menghapus todo:', error);
+                                }
                             } else {
                                 alert('Aksi dibatalkan')
                             }
