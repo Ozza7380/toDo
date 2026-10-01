@@ -68,6 +68,11 @@
                         const btnDelete = document.createElement('button');
                         btnDelete.textContent = "Delete"
 
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+
+                        
+
                         btnDelete.onclick = async function() {
                             const ya = confirm("Apakah anda ingin menghapus data ini?")
                             if (ya) {
@@ -96,6 +101,7 @@
                             user id: ${todo.user_id}`)
                         };
 
+                        li.appendChild(checkbox);
                         li.appendChild(btnDelete);
                         li.appendChild(btnEdit);
                         li.appendChild(btnDetail);
